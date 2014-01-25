@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require "thor"
+require "docker-winch"
+
+module CliHelper
+end
+
+
+class WinchCli < Thor
+
+  #option :baleen_server
+  desc "up", "Start container"
+  def up
+    puts "starting container"
+  end
+
+  desc "setup", "Setup initial configuration of winch"
+  def setup
+  end
+
+  desc "bootstrap", "Create template for containers"
+  def bootstrap(name)
+    builder = Winch::Builder.new
+    builder.bootstrap(name)
+  end
+
+  desc "build", "Build container"
+  def build
+  end
+
+end
+
+WinchCli.start(ARGV)
