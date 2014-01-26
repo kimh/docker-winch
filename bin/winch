@@ -31,6 +31,17 @@ class WinchCli < Thor
     builder.build(name)
   end
 
+  desc "pack", "Pack files into a container"
+  def pack(name)
+    builder = Winch::Packer.new
+    builder.pack(name)
+  end
+
+  desc "push", "Push files into a container"
+  def push(name)
+    builder = Winch::Packer.new
+    builder.push(name)
+  end
 end
 
 WinchCli.start(ARGV)

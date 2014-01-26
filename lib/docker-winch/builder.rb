@@ -3,14 +3,14 @@ module Winch
 
   class Builder
 
-    WINCH_DIR = "#{ENV["HOME"]}/winch"
+    BUILD_DIR = "#{ENV["HOME"]}/winch/build"
     DOCKER_HOST = "192.168.56.4"
 
     def initialize
     end
 
     def bootstrap(name)
-      base = "#{WINCH_DIR}/#{name}"
+      base = "#{BUILD_DIR}/#{name}"
 
       if File.exist?(base)
         hl_error "#{name} already exists."
@@ -55,7 +55,7 @@ module Winch
     end
 
     def build(name)
-      Dir.chdir("#{WINCH_DIR}/#{name}") do
+      Dir.chdir("#{BUILD_DIR}/#{name}") do
         cmd = "docker -H #{DOCKER_HOST} build -t #{name} ."
         Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
