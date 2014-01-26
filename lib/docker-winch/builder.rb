@@ -1,17 +1,24 @@
 module Winch
+  require "open3"
+
   class Builder
+
+    WINCH_DIR = "#{ENV["HOME"]}/winch"
+    DOCKER_HOST = "192.168.56.4"
+
     def initialize
     end
 
     def bootstrap(name)
-      if File.exist?(name)
+      base = "#{WINCH_DIR}/#{name}"
+
+      if File.exist?(base)
         hl_error "#{name} already exists."
         return
       end
 
       puts "Bootstapping #{name}..."
 
-      base = "./#{name}"
       dockerfile = File.join(base, "Dockerfile")
       up = File.join(base,"up")
       down = File.join(base, "down")
@@ -20,7 +27,7 @@ module Winch
       down_dir = File.join(hooks_dir, "down")
       create_msg = "    create: ".green
 
-      Dir::mkdir(name)
+      Dir::mkdir(base)
 
       File.open(dockerfile, "w") do |f|
         f.write "From ubuntu\n"
@@ -47,7 +54,25 @@ module Winch
 
     end
 
-    def build
+    def build(name)
+      Dir.chdir("#{WINCH_DIR}/#{name}") do
+        cmd = "docker -H #{DOCKER_HOST} build -t #{name} ."
+        Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+
+          if wait_thr.value == 0
+            while line = stdout.gets
+              hl_info line
+            end
+          else
+            hl_warn "Error to build #{name}"
+
+            hl_info "<>" * 30
+            while line = stderr.gets
+              hl_error line
+            end
+          end
+        end
+      end
     end
   end
 end

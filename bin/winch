@@ -26,7 +26,9 @@ class WinchCli < Thor
   end
 
   desc "build", "Build container"
-  def build
+  def build(name)
+    builder = Winch::Builder.new
+    builder.build(name)
   end
 
 end
